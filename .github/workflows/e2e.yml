@@ -24,8 +24,6 @@ jobs:
       PROJECT: Nextcloud.xcodeproj
       DESTINATION: ${{ matrix.destination }}
     steps:
-    - name: Set env var
-      run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
     - uses: actions/checkout@v4
     - name: Download GoogleService-Info.plist
       run: wget "https://raw.githubusercontent.com/firebase/quickstart-ios/master/mock-GoogleService-Info.plist" -O GoogleService-Info.plist
@@ -36,6 +34,8 @@ jobs:
         else
           sudo xcode-select -s /Applications/Xcode_26.0.app
         fi
+    - name: Set env var
+      run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
     - name: Build iOS Share
       run: |
         xcodebuild build -project $PROJECT -scheme "$SCHEME" -destination "$DESTINATION" | xcbeautify 
