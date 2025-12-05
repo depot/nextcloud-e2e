@@ -1,0 +1,62 @@
+name: "Report Test Status"
+description: "Reports test status to Discord and Incident.io"
+inputs:
+  job-status:
+    description: "The status of the job (success or failure)"
+    required: true
+  job-name:
+    description: "Human-readable job name"
+    required: true
+  discord-webhook:
+    description: "Discord webhook URL"
+    required: true
+  incident-io-token:
+    description: "Incident.io API token"
+    required: false
+    default: ""
+  run-id:
+    description: "GitHub Actions run ID (from github.run_id)"
+    required: true
+  job-id:
+    description: "GitHub Actions check run ID (from job.check_run_id) - used for job URL"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Report to Discord
+      shell: bash
+      run: |
+        if [ "${{ inputs.job-status }}" = "success" ]; then
+          EMOJI="✅"
+          STATUS_TEXT="passed"
+        else
+          EMOJI="⚠️"
+          STATUS_TEXT="failed"
+        fi
+
+        curl "${{ inputs.discord-webhook }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"content\": \"${EMOJI} ${{ inputs.job-name }} ${STATUS_TEXT} in [job](https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run-id }}/job/${{ inputs.job-id }})\"}"
+
+    - name: Report to Incident.io
+      if: inputs.incident-io-token != ''
+      shell: bash
+      run: |
+        if [ "${{ inputs.job-status }}" = "success" ]; then
+          STATUS="resolved"
+          TITLE="${{ inputs.job-name }} e2e test passed"
+          DESCRIPTION="The ${{ inputs.job-name }} e2e test has passed"
+        else
+          STATUS="firing"
+          TITLE="${{ inputs.job-name }} e2e test failed"
+          DESCRIPTION="The ${{ inputs.job-name }} e2e test has failed"
+        fi
+
+        # Use job-name for deduplication key to ensure separate alerts per job
+        DEDUP_KEY=$(echo "${{ inputs.job-name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+        curl "https://api.incident.io/v2/alert_events/http/01K9GDPRRN3PKD18C7EGANTPZ9" \
+          -H "Authorization: Bearer ${{ inputs.incident-io-token }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"status\": \"${STATUS}\", \"title\": \"${TITLE}\", \"description\": \"${DESCRIPTION}\", \"deduplication_key\": \"${DEDUP_KEY}-e2e\", \"source_url\": \"https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run-id }}/job/${{ inputs.job-id }}\", \"metadata\": {\"job\": \"${{ inputs.job-name }}\", \"run_id\": \"${{ inputs.run_id }}\", \"check_run_id\": \"${{ inputs.job-id }}\"}}"
