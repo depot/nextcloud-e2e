@@ -15,6 +15,7 @@ jobs:
       matrix:
         os: [depot-macos-14, depot-macos-15]
     name: Build and Test
+    runs-on: ${{ matrix.os }}
     env:
       PROJECT: Nextcloud.xcodeproj
       DESTINATION: platform=iOS Simulator,name=iPhone 15
