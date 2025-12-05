@@ -13,21 +13,32 @@ jobs:
   build-and-test:
     strategy:
       matrix:
-        os: [depot-macos-14, depot-macos-15]
+        include:
+          - os: depot-macos-14
+            destination: platform=iOS Simulator,name=iPhone 15
+          - os: depot-macos-15
+            destination: platform=iOS Simulator,name=iPhone 16
     name: Build and Test
     runs-on: ${{ matrix.os }}
     env:
       PROJECT: Nextcloud.xcodeproj
-      DESTINATION: platform=iOS Simulator,name=iPhone 15
+      DESTINATION: ${{ matrix.destination }}
     steps:
     - name: Set env var
       run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
     - uses: actions/checkout@v4
     - name: Download GoogleService-Info.plist
       run: wget "https://raw.githubusercontent.com/firebase/quickstart-ios/master/mock-GoogleService-Info.plist" -O GoogleService-Info.plist
+    - name: xcode select
+      run: |
+        if [ "${{ matrix.os }}" == "depot-macos-14" ]; then
+          sudo xcode-select -s /Applications/Xcode_16.4.app
+        else
+          sudo xcode-select -s /Applications/Xcode_26.0.app
+        fi
     - name: Build iOS Share
       run: |
-        xcodebuild build -project $PROJECT -scheme "$SCHEME" -destination "$DESTINATION" | xcbeautify --quieter
+        xcodebuild build -project $PROJECT -scheme "$SCHEME" -destination "$DESTINATION" | xcbeautify 
       env:
           SCHEME: Share
     # - name: Build iOS File Extension
