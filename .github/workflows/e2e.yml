@@ -20,7 +20,7 @@ jobs:
           - os: depot-macos-15
             destination: arch=arm64,platform=iOS Simulator,OS=18.6,name=iPhone 16
             xcode: /Applications/Xcode_16.4.app
-          - os: depot-macos-beta
+          - os: depot-macos-26
             destination: arch=arm64,platform=iOS Simulator,OS=26.4.1,name=iPhone 17
             xcode: /Applications/Xcode_26.5.app
     name: Build and Test
