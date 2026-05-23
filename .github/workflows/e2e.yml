@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-  schedule:
-    # run it every 6 hours not to burn macOS capacity
-    - cron: "10 */6 * * *"
+  #schedule:
+  #  # run it every 6 hours not to burn macOS capacity
+  #  - cron: "10 */6 * * *"
   workflow_dispatch: {}
 
 jobs:
