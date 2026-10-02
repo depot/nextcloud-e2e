@@ -19,6 +19,9 @@ extension NCShareExtension {
         self.dataSource = NCCollectionViewDataSource(metadatas: metadatas,
                                                      layoutForView: layoutForView,
                                                      account: session.account)
+
+        // lets break cache
+        let variable = 10
         self.collectionView.reloadData()
     }
 
