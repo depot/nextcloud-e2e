@@ -10,7 +10,7 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  build-and-test:
+  build-and-test:      
     strategy:
       matrix:
         include:
@@ -29,6 +29,7 @@ jobs:
       PROJECT: Nextcloud.xcodeproj
       DESTINATION: ${{ matrix.destination }}
       XCODE: ${{ matrix.xcode }}
+      DEPOT_XCODE_CACHE_ENABLED: 1
     steps:
     - uses: actions/checkout@v4
     - name: Download GoogleService-Info.plist
