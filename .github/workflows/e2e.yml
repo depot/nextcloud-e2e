@@ -17,7 +17,7 @@ jobs:
           #- os: depot-macos-14
           #  destination: arch=arm64,platform=iOS Simulator,OS=18.6,name=iPhone 16
           #  xcode: /Applications/Xcode_16.4.app
-          - os: depot-macos-15
+          - os: depot-macos-latwst
             destination: arch=arm64,platform=iOS Simulator,OS=18.6,name=iPhone 16
             xcode: /Applications/Xcode_26.1.app
           - os: depot-macos-26
