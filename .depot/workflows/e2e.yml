@@ -22,7 +22,7 @@ jobs:
           #   xcode: /Applications/Xcode_26.1.app
           - os: depot-macos-26
             destination: arch=arm64,platform=iOS Simulator,OS=26.4.1,name=iPhone 17
-            xcode: /Applications/Xcode_26_3.app
+            xcode: /Applications/Xcode_26.3.app
     name: Build and Test
     runs-on: ${{ matrix.os }}
     env:
